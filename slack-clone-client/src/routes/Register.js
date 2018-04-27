@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Container, Header, Input, Button, Message } from 'semantic-ui-react'
 import { graphql } from 'react-apollo';

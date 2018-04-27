@@ -6,7 +6,7 @@ import { Container, Header, Input, Button, Message } from 'semantic-ui-react'
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-export default observer(class Login extends React.Component {
+class Login extends React.Component {
   constructor(props) {
     super(props);
     extendObservable(this, {
@@ -20,24 +20,20 @@ export default observer(class Login extends React.Component {
     this[name] = value
   }
 
-  onSubmit = () => {
+  onSubmit = async () => {
     const {password, email} = this
-    console.log(password, email);
-    // const response = await this.props.mutate({
-    //   variables: {username, password, email},
-    // })
-    // const {ok, errors} = response.data.register
-    // console.log(response)
-    // if (ok) {
-    //   this.props.history.push('/')
-    // } else {
-    //   const err = {};
-    //   errors.forEach(({ path, message }) => {
-    //     err[`${path}Error`] = message;
-    //   });
-    //   console.log(err)
-    //   this.setState(err)
-    // }
+    const response = await this.props.mutate({
+      variables: { email, password }
+    })
+    console.log(response)
+    const {ok, token, refreshToken, errors} = response.data.login
+    if (ok) {
+      localStorage.setItem('token', token);
+      localStorage.setItem('refreshToken', refreshToken);
+    } else {
+      const err = {};
+      console.log(err)
+    }
   }
 
   render () {
@@ -63,4 +59,20 @@ export default observer(class Login extends React.Component {
       </Container>
     )
   }
-});
+};
+
+const loginMutation = gql`
+mutation($email: String!, $password: String!) {
+  login(email: $email, password: $password) {
+    ok
+    token
+    refreshToken
+    errors {
+      path
+      message
+    }
+  }
+}
+`
+
+export default graphql(loginMutation)(observer(Login));

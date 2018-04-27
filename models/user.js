@@ -19,7 +19,6 @@ export default (sequelize, DataTypes) => {
       unique: true,
       validate: {
         isEmail: {
-          args: true,
           message: 'please anter a valid email',
         },
       },
@@ -28,7 +27,6 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       validate: {
         len: {
-          args: [5, 20],
           message: 'can only be between 5-20 letters',
         },
       },
