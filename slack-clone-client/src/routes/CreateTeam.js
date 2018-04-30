@@ -6,12 +6,11 @@ import { Form, Container, Header, Input, Button, Message } from 'semantic-ui-rea
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 
-class Login extends React.Component {
+class CreateTeam extends React.Component {
   constructor(props) {
     super(props);
     extendObservable(this, {
-      email: '',
-      password: '',
+      name: '',
       errors: {}
     })
   }
@@ -22,15 +21,14 @@ class Login extends React.Component {
   }
 
   onSubmit = async () => {
-    const {password, email} = this
+    const { name } = this
     const response = await this.props.mutate({
-      variables: { email, password }
+      variables: { name }
     })
-    const {ok, token, refreshToken, errors} = response.data.login
-    console.log(token, refreshToken);
+    const {ok, errors} = response.data.createTeam
+    console.log(response.data.createTeam);
     if (ok) {
-      localStorage.setItem('token', token);
-      localStorage.setItem('refreshToken', refreshToken);
+      this.props.history.push('/')
     } else {
       const err = {};
       errors.forEach(({ path, message }) => {
@@ -42,39 +40,26 @@ class Login extends React.Component {
 
   render () {
     const {onSubmit, onChange} = this
-    const {password, email, errors: { passwordError, emailError }} = this
+    const {name, errors: { nameError }} = this
     const errorList = []
-    if (passwordError) {
-      errorList.push(passwordError)
-    }
-    if (emailError) {
-      errorList.push(emailError)
+    if (nameError) {
+      errorList.push(nameError)
     }
 
     return (
       <Container>
-        <Header as='h2'>Login</Header>
+        <Header as='h2'>Create A Team</Header>
         <Form>
           <Form.Field
-            error={!!emailError}
+            error={!!nameError}
             >
             <Input
-              name='email'
+              name='name'
               onChange={onChange}
-              placeholder='Email'
+              placeholder='Name'
+              type='name'
               fluid
-              value={email}/>
-          </Form.Field>
-          <Form.Field
-            error={!!passwordError}
-            >
-            <Input
-              name='password'
-              onChange={onChange}
-              placeholder='Password'
-              type='password'
-              fluid
-              value={password}/>
+              value={name}/>
           </Form.Field>
           <Button onClick={onSubmit}>Submit</Button>
           </Form>
@@ -88,12 +73,10 @@ class Login extends React.Component {
   }
 };
 
-const loginMutation = gql`
-  mutation($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
+const createTeamMutation = gql`
+  mutation($name: String!) {
+    createTeam(name: $name) {
       ok
-      token
-      refreshToken
       errors {
         path
         message
@@ -102,4 +85,4 @@ const loginMutation = gql`
   }
 `
 
-export default graphql(loginMutation)(observer(Login));
+export default graphql(createTeamMutation)(observer(CreateTeam));
