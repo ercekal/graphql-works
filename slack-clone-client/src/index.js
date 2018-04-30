@@ -10,7 +10,7 @@ import 'semantic-ui-css/semantic.min.css';
 import registerServiceWorker from './registerServiceWorker';
 import Routes from './routes';
 
-const httpLink = new HttpLink({ uri: 'http://localhost:8080/graphql' });
+const httpLink = new HttpLink({ uri: 'http://localhost:8081/graphql' });
 
 const getTokenMiddleware = new ApolloLink((operation, forward) => {
   operation.setContext(({ headers }) => ({
